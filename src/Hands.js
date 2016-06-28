@@ -46,6 +46,8 @@ export default class Hands extends React.Component {
                     maxNumber={10 - cost + 1}
                     selectedCount={state.selectedCount}
                     hoveringIndex={state.hoveringIndex}
+                    totalCost={state.totalCost}
+                    key={i}
                 />
             );
         });

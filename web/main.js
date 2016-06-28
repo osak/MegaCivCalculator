@@ -19827,7 +19827,12 @@ var CardHolder = function (_React$Component) {
             return _react2.default.createElement(
                 'div',
                 null,
-                cards
+                cards,
+                _react2.default.createElement(
+                    'span',
+                    null,
+                    this.props.totalCost
+                )
             );
         }
     }]);
@@ -19913,7 +19918,9 @@ var Hands = function (_React$Component) {
                     updateHandler: _this3.cardHolderUpdater(cost, i).bind(_this3),
                     maxNumber: 10 - cost + 1,
                     selectedCount: state.selectedCount,
-                    hoveringIndex: state.hoveringIndex
+                    hoveringIndex: state.hoveringIndex,
+                    totalCost: state.totalCost,
+                    key: i
                 });
             });
             return _react2.default.createElement(
@@ -19950,20 +19957,45 @@ var _Hands = require('./Hands');
 
 var _Hands2 = _interopRequireDefault(_Hands);
 
+var _TotalCostDisplay = require('./TotalCostDisplay');
+
+var _TotalCostDisplay2 = _interopRequireDefault(_TotalCostDisplay);
+
 var _PropertyUtil = require('./PropertyUtil');
 
 var _PropertyUtil2 = _interopRequireDefault(_PropertyUtil);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function renderHands(props) {
-    _reactDom2.default.render(_react2.default.createElement(_Hands2.default, props), document.getElementById('react'));
+var state = initialState();
+
+function renderHands() {
+    _reactDom2.default.render(_react2.default.createElement(_Hands2.default, state), document.getElementById('hands'));
 }
 
-var state = initialState();
+function renderTotalCosts() {
+    var totalCost = state.cardHolderStates.reduce(function (prev, curr) {
+        return prev + (curr !== null ? curr[0].totalCost + curr[1].totalCost : 0);
+    }, 0);
+    _reactDom2.default.render(_react2.default.createElement(_TotalCostDisplay2.default, { totalCost: totalCost }), document.getElementById('total-cost'));
+}
+
 function update(diff) {
     _PropertyUtil2.default.update(state, diff);
-    renderHands(state);
+    recalculateCost();
+    renderHands();
+    renderTotalCosts();
+}
+
+function recalculateCost() {
+    state.cardHolderStates.forEach(function (holdersByCost, cost) {
+        if (cost == 0) {
+            return;
+        }
+        holdersByCost.forEach(function (holder) {
+            holder.totalCost = holder.selectedCount * holder.selectedCount * cost;
+        });
+    });
 }
 
 function initialState() {
@@ -19984,10 +20016,10 @@ function initialState() {
 }
 
 window.addEventListener('DOMContentLoaded', function () {
-    renderHands(initialState());
+    update({});
 }, false);
 
-},{"./Hands":170,"./PropertyUtil":172,"react":167,"react-dom":29}],172:[function(require,module,exports){
+},{"./Hands":170,"./PropertyUtil":172,"./TotalCostDisplay":173,"react":167,"react-dom":29}],172:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -20069,4 +20101,58 @@ var PropertyUtil = function () {
 
 exports.default = PropertyUtil;
 
-},{}]},{},[171]);
+},{}],173:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by osak on 16/06/29.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var STYLE = {
+    fontSize: '20pt',
+    fontWeight: 'bold'
+};
+
+var TotalCostDisplay = function (_React$Component) {
+    _inherits(TotalCostDisplay, _React$Component);
+
+    function TotalCostDisplay(props) {
+        _classCallCheck(this, TotalCostDisplay);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(TotalCostDisplay).call(this, props));
+    }
+
+    _createClass(TotalCostDisplay, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.createElement(
+                'div',
+                { style: STYLE },
+                'Total Cost: ',
+                this.props.totalCost
+            );
+        }
+    }]);
+
+    return TotalCostDisplay;
+}(_react2.default.Component);
+
+exports.default = TotalCostDisplay;
+
+},{"react":167}]},{},[171]);

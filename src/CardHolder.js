@@ -42,6 +42,7 @@ export default class CardHolder extends React.Component {
         return (
             <div>
                 {cards}
+                <span>{this.props.totalCost}</span>
             </div>
         );
     }
