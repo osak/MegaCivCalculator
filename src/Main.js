@@ -10,6 +10,13 @@ import CivilizationDisplay from './CivilizationDisplay';
 
 var state = initialState();
 var totalCost = 0;
+var credits = {
+    red: 5,
+    orange: 5,
+    blue: 5,
+    green: 5,
+    yellow: 5
+};
 
 function renderHands() {
     ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
@@ -27,10 +34,16 @@ function renderCivilizations() {
         return {
             name: civ.name,
             cost: civ.cost,
-            buyable: civ.cost <= totalCost
+            buyable: civ.cost <= totalCost,
+            credits: civ.credits
         };
     });
-    ReactDOM.render(React.createElement(CivilizationDisplay, {civilizations: civilizations}), document.getElementById('civilizations'));
+    let displayProps = {
+        civilizations: civilizations,
+        buyHandler: buyCivilization,
+        credits: credits
+    };
+    ReactDOM.render(React.createElement(CivilizationDisplay, displayProps), document.getElementById('civilizations'));
 }
 
 function update(diff) {
@@ -52,6 +65,16 @@ function recalculateCost() {
             totalCost += holder.totalCost;
         });
     });
+}
+
+function buyCivilization(index) {
+    let civ = CivilizationList[index];
+    if (civ.cost <= totalCost) {
+        civ.credits.forEach((credit) => {
+            credits[credit.color] += credit.amount;
+        });
+    }
+    renderCivilizations();
 }
 
 function initialState() {

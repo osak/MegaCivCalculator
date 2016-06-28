@@ -4,6 +4,8 @@
 
 import React from 'react';
 
+import Credits from './Credits';
+
 import Civilization from './Civilization';
 
 export default class CivilizationDisplay extends React.Component {
@@ -11,20 +13,41 @@ export default class CivilizationDisplay extends React.Component {
         super(props);
     }
     
+    clickHandler(i) {
+        return (e) => {
+            this.props.buyHandler(i);
+        };
+    }
+    
     render() {
-        let civs = this.props.civilizations.map((civ) => {
+        let civs = this.props.civilizations.map((civ, i) => {
             return (
                 <Civilization
                     name={civ.name}
                     cost={civ.cost}
                     buyable={civ.buyable}
+                    credits={civ.credits}
+                    clickHandler={this.clickHandler(i)}
                 />
             );
         });
         return (
             <div>
-                {civs}
+                {this.renderCredits()}
+                <div style={{display: 'table', borderCollapse: 'separate', borderSpacing: '2pt'}}>
+                    {civs}
+                </div>
             </div>
         );
+    }
+
+    renderCredits() {
+        return Object.keys(this.props.credits).map((color) => {
+            return (
+                <span style={{marginRight: '10pt', color: Credits[color].color}}>
+                    {Credits[color].symbol}: {this.props.credits[color]}
+                </span>
+            );
+        });
     }
 }
