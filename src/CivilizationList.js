@@ -8,7 +8,8 @@ const CivilizationList = [
         cost: 100,
         credits: [
             {color: 'red', amount: 20}
-        ]
+        ],
+        discountBy: ['yellow']
     },
     {
         name: 'Test2',
@@ -16,7 +17,8 @@ const CivilizationList = [
         credits: [
             {color: 'orange', amount: 20},
             {color: 'blue', amount: 5}
-        ]
+        ],
+        discountBy: ['red', 'green']
     }
 ];
 

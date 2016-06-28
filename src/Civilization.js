@@ -23,9 +23,9 @@ export default class Civilization extends React.Component {
 
     render() {
         let style = Object.assign({}, BASE_STYLE);
-        if (!this.props.buyable) {
-            style.backgroundColor = 'lightgray';
-        }
+        let color1 = Credits[this.props.discountBy[0]].color;
+        let color2 = this.props.discountBy.length > 1 ? Credits[this.props.discountBy[1]].color : color1;
+        style.backgroundImage = 'linear-gradient(90deg,' + color1 + ',' + color2 + ')';
         return (
             <div style={style} onClick={this.props.clickHandler}>
                 <h3>{this.props.name}</h3>

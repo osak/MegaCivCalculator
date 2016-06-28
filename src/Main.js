@@ -31,11 +31,13 @@ function renderTotalCosts() {
 
 function renderCivilizations() {
     let civilizations = CivilizationList.map((civ) => {
+        let maxDiscount = Math.max.apply(null, civ.discountBy.map((color) => credits[color]));
         return {
             name: civ.name,
-            cost: civ.cost,
+            cost: Math.max(civ.cost - maxDiscount, 0),
             buyable: civ.cost <= totalCost,
-            credits: civ.credits
+            credits: civ.credits,
+            discountBy: civ.discountBy
         };
     });
     let displayProps = {

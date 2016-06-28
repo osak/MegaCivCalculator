@@ -27,6 +27,7 @@ export default class CivilizationDisplay extends React.Component {
                     cost={civ.cost}
                     buyable={civ.buyable}
                     credits={civ.credits}
+                    discountBy={civ.discountBy}
                     clickHandler={this.clickHandler(i)}
                 />
             );
