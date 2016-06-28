@@ -13,17 +13,17 @@ export default class CardHolder extends React.Component {
 
     hoverStateUpdater(index) {
         return (e) => {
-            this.props.onUpdate(Object.assign({}, this.props, {
+            this.props.updateHandler({
                 hoveringIndex: index
-            }));
+            });
         };
     }
     
     selectedStateUpdater(index) {
         return (e) => {
-            this.props.onUpdate(Object.assign({}, this.props, {
+            this.props.updateHandler({
                 selectedCount: index + 1
-            }));
+            });
         };
     }
     

@@ -19795,9 +19795,9 @@ var CardHolder = function (_React$Component) {
             var _this2 = this;
 
             return function (e) {
-                _this2.props.onUpdate(Object.assign({}, _this2.props, {
+                _this2.props.updateHandler({
                     hoveringIndex: index
-                }));
+                });
             };
         }
     }, {
@@ -19806,9 +19806,9 @@ var CardHolder = function (_React$Component) {
             var _this3 = this;
 
             return function (e) {
-                _this3.props.onUpdate(Object.assign({}, _this3.props, {
+                _this3.props.updateHandler({
                     selectedCount: index + 1
-                }));
+                });
             };
         }
     }, {
@@ -19840,6 +19840,104 @@ exports.default = CardHolder;
 },{"./Card":168,"react":167}],170:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _CardHolder = require('./CardHolder');
+
+var _CardHolder2 = _interopRequireDefault(_CardHolder);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by osak on 16/06/28.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var Hands = function (_React$Component) {
+    _inherits(Hands, _React$Component);
+
+    function Hands(props) {
+        _classCallCheck(this, Hands);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Hands).call(this, props));
+    }
+
+    _createClass(Hands, [{
+        key: 'render',
+        value: function render() {
+            var cardHolderByCost = [];
+            for (var i = 1; i < this.props.cardHolderStates.length; ++i) {
+                cardHolderByCost.push(this.renderCardsOfCost(i));
+            }
+            return _react2.default.createElement(
+                'div',
+                null,
+                cardHolderByCost
+            );
+        }
+    }, {
+        key: 'cardHolderUpdater',
+        value: function cardHolderUpdater(cost, kind) {
+            var _this2 = this;
+
+            return function (stateDiff) {
+                _this2.props.updateHandler({
+                    cardHolderStates: [{
+                        index: cost,
+                        value: [{
+                            index: kind,
+                            value: stateDiff
+                        }]
+                    }]
+                });
+            };
+        }
+    }, {
+        key: 'renderCardsOfCost',
+        value: function renderCardsOfCost(cost) {
+            var _this3 = this;
+
+            var cardHolders = this.props.cardHolderStates[cost].map(function (state, i) {
+                return _react2.default.createElement(_CardHolder2.default, {
+                    updateHandler: _this3.cardHolderUpdater(cost, i).bind(_this3),
+                    maxNumber: 10 - cost + 1,
+                    selectedCount: state.selectedCount,
+                    hoveringIndex: state.hoveringIndex
+                });
+            });
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(
+                    'h2',
+                    null,
+                    'Cost ',
+                    cost
+                ),
+                cardHolders
+            );
+        }
+    }]);
+
+    return Hands;
+}(_react2.default.Component);
+
+exports.default = Hands;
+
+},{"./CardHolder":169,"react":167}],171:[function(require,module,exports){
+'use strict';
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -19848,23 +19946,127 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
-var _CardHolder = require('./CardHolder');
+var _Hands = require('./Hands');
 
-var _CardHolder2 = _interopRequireDefault(_CardHolder);
+var _Hands2 = _interopRequireDefault(_Hands);
+
+var _PropertyUtil = require('./PropertyUtil');
+
+var _PropertyUtil2 = _interopRequireDefault(_PropertyUtil);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function renderCardHolder(props) {
-    _reactDom2.default.render(_react2.default.createElement(_CardHolder2.default, props), document.getElementById('react'));
+function renderHands(props) {
+    _reactDom2.default.render(_react2.default.createElement(_Hands2.default, props), document.getElementById('react'));
+}
+
+var state = initialState();
+function update(diff) {
+    _PropertyUtil2.default.update(state, diff);
+    renderHands(state);
+}
+
+function initialState() {
+    var cardHolderStates = [null];
+    for (var i = 1; i <= 9; ++i) {
+        cardHolderStates.push([{
+            selectedCount: 0,
+            hoveringIndex: -1
+        }, {
+            selectedCount: 0,
+            hoveringIndex: -1
+        }]);
+    }
+    return {
+        cardHolderStates: cardHolderStates,
+        updateHandler: update
+    };
 }
 
 window.addEventListener('DOMContentLoaded', function () {
-    renderCardHolder({
-        maxNumber: 8,
-        selectedCount: 0,
-        hoveringIndex: -1,
-        onUpdate: renderCardHolder
-    });
+    renderHands(initialState());
 }, false);
 
-},{"./CardHolder":169,"react":167,"react-dom":29}]},{},[170]);
+},{"./Hands":170,"./PropertyUtil":172,"react":167,"react-dom":29}],172:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Created by osak on 16/06/29.
+ */
+
+var PropertyUtil = function () {
+    function PropertyUtil() {
+        _classCallCheck(this, PropertyUtil);
+    }
+
+    _createClass(PropertyUtil, null, [{
+        key: 'update',
+
+        /**
+         * Update original hash with diff.
+         * Original hash will be modified.
+         *
+         * @param original
+         * @param diff
+         * @param name
+         */
+        value: function update(original, diff) {
+            var name = arguments.length <= 2 || arguments[2] === undefined ? '' : arguments[2];
+
+            if (Array.isArray(original)) {
+                return PropertyUtil.updateArray(original, diff, name);
+            } else {
+                Object.keys(diff).forEach(function (key) {
+                    var target = original[key];
+                    var targetName = name + '.' + key;
+                    var spec = diff[key];
+                    if ((typeof spec === 'undefined' ? 'undefined' : _typeof(spec)) !== 'object') {
+                        if ((typeof target === 'undefined' ? 'undefined' : _typeof(target)) === 'object') {
+                            throw 'Invalid assign: ' + targetName + ' is not primitive';
+                        }
+                        original[key] = spec;
+                    } else {
+                        PropertyUtil.update(target, spec, targetName);
+                    }
+                });
+                return original;
+            }
+        }
+    }, {
+        key: 'updateArray',
+        value: function updateArray(original, diff, name) {
+            if (!Array.isArray(diff)) {
+                throw 'Invalid diff: ' + name + ' should be array';
+            }
+            diff.forEach(function (spec) {
+                var target = original[spec.index];
+                var targetName = name + '[' + spec.index + ']';
+                if (_typeof(spec.value) !== 'object') {
+                    if ((typeof target === 'undefined' ? 'undefined' : _typeof(target)) === 'object') {
+                        throw 'Invalid assign: ' + targetName + ' is not primitive';
+                    }
+                    original[spec.index] = spec.value;
+                } else {
+                    PropertyUtil.update(original[spec.index], spec.value, targetName);
+                }
+            });
+            return original;
+        }
+    }]);
+
+    return PropertyUtil;
+}();
+
+exports.default = PropertyUtil;
+
+},{}]},{},[171]);
