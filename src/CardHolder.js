@@ -21,8 +21,9 @@ export default class CardHolder extends React.Component {
     
     selectedStateUpdater(index) {
         return (e) => {
+            let nextCount = index < this.props.selectedCount ? 0 : index + 1;
             this.props.updateHandler({
-                selectedCount: index + 1
+                selectedCount: nextCount
             });
         };
     }

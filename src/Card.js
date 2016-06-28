@@ -25,7 +25,7 @@ export default class Card extends React.Component {
     }
 
     render() {
-        let style = this.props.selected ? SELECTED_STYLE
+        var style = this.props.selected ? SELECTED_STYLE
             : this.props.hovered ? HOVERED_STYLE
             : BASE_STYLE;
         return (
