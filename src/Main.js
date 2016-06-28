@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import Hands from './Hands';
-import TotalCostDisplay from './TotalCostDisplay';
+import CivilizationList from './CivilizationList';
 import PropertyUtil from './PropertyUtil';
 
+import Hands from './Hands';
+import TotalCostDisplay from './TotalCostDisplay';
+import CivilizationDisplay from './CivilizationDisplay';
+
 var state = initialState();
+var totalCost = 0;
 
 function renderHands() {
     ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
@@ -18,20 +22,34 @@ function renderTotalCosts() {
     ReactDOM.render(React.createElement(TotalCostDisplay, {totalCost: totalCost}), document.getElementById('total-cost'));
 }
 
+function renderCivilizations() {
+    let civilizations = CivilizationList.map((civ) => {
+        return {
+            name: civ.name,
+            cost: civ.cost,
+            buyable: civ.cost <= totalCost
+        };
+    });
+    ReactDOM.render(React.createElement(CivilizationDisplay, {civilizations: civilizations}), document.getElementById('civilizations'));
+}
+
 function update(diff) {
     PropertyUtil.update(state, diff);
     recalculateCost();
     renderHands();
     renderTotalCosts();
+    renderCivilizations();
 }
 
 function recalculateCost() {
+    totalCost = 0;
     state.cardHolderStates.forEach((holdersByCost, cost) => {
         if (cost == 0) {
             return;
         }
         holdersByCost.forEach((holder) => {
             holder.totalCost = holder.selectedCount * holder.selectedCount * cost;
+            totalCost += holder.totalCost;
         });
     });
 }
