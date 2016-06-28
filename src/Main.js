@@ -1,20 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-class Test extends React.Component {
-    constructor(props) {
-        super(props);
-    }
+import CardHolder from './CardHolder';
 
-    render() {
-        return (
-            <div>
-                <h1>Hello React!</h1>
-            </div>
-        );
-    }
+function renderCardHolder(props) {
+    ReactDOM.render(React.createElement(CardHolder, props), document.getElementById('react'));
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    ReactDOM.render(<Test />, document.getElementById('react'));
+    renderCardHolder({
+        maxNumber: 8,
+        selectedCount: 0,
+        hoveringIndex: -1,
+        onUpdate: renderCardHolder
+    });
 }, false);

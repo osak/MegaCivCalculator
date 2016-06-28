@@ -19693,7 +19693,152 @@ module.exports = require('./lib/React');
 },{"./lib/React":55}],168:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by osak on 16/06/28.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var BASE_STYLE = {
+    border: '1px black solid',
+    borderRadius: '5px',
+    width: '10pt',
+    height: '15pt',
+    margin: '0 2pt 0 2pt',
+    display: 'inline-block'
+};
+var HOVERED_STYLE = Object.assign({}, BASE_STYLE, {
+    backgroundColor: 'lightgray'
+});
+var SELECTED_STYLE = Object.assign({}, BASE_STYLE, {
+    backgroundColor: '#c0c000'
+});
+
+var Card = function (_React$Component) {
+    _inherits(Card, _React$Component);
+
+    function Card(props) {
+        _classCallCheck(this, Card);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Card).call(this, props));
+    }
+
+    _createClass(Card, [{
+        key: 'render',
+        value: function render() {
+            var style = this.props.selected ? SELECTED_STYLE : this.props.hovered ? HOVERED_STYLE : BASE_STYLE;
+            return _react2.default.createElement('span', { onMouseEnter: this.props.hoverHandler,
+                onMouseLeave: this.props.leaveHandler,
+                onClick: this.props.clickHandler,
+                style: style });
+        }
+    }]);
+
+    return Card;
+}(_react2.default.Component);
+
+exports.default = Card;
+
+},{"react":167}],169:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Card = require('./Card');
+
+var _Card2 = _interopRequireDefault(_Card);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by osak on 16/06/28.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+var CardHolder = function (_React$Component) {
+    _inherits(CardHolder, _React$Component);
+
+    function CardHolder(props) {
+        _classCallCheck(this, CardHolder);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(CardHolder).call(this, props));
+    }
+
+    _createClass(CardHolder, [{
+        key: 'hoverStateUpdater',
+        value: function hoverStateUpdater(index) {
+            var _this2 = this;
+
+            return function (e) {
+                _this2.props.onUpdate(Object.assign({}, _this2.props, {
+                    hoveringIndex: index
+                }));
+            };
+        }
+    }, {
+        key: 'selectedStateUpdater',
+        value: function selectedStateUpdater(index) {
+            var _this3 = this;
+
+            return function (e) {
+                _this3.props.onUpdate(Object.assign({}, _this3.props, {
+                    selectedCount: index + 1
+                }));
+            };
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var cards = [];
+            for (var i = 0; i < this.props.maxNumber; ++i) {
+                cards.push(_react2.default.createElement(_Card2.default, { hoverHandler: this.hoverStateUpdater(i).bind(this),
+                    leaveHandler: this.hoverStateUpdater(-1).bind(this),
+                    clickHandler: this.selectedStateUpdater(i).bind(this),
+                    key: i,
+                    selected: i < this.props.selectedCount,
+                    hovered: i <= this.props.hoveringIndex
+                }));
+            }
+            return _react2.default.createElement(
+                'div',
+                null,
+                cards
+            );
+        }
+    }]);
+
+    return CardHolder;
+}(_react2.default.Component);
+
+exports.default = CardHolder;
+
+},{"./Card":168,"react":167}],170:[function(require,module,exports){
+'use strict';
 
 var _react = require('react');
 
@@ -19703,43 +19848,23 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _CardHolder = require('./CardHolder');
+
+var _CardHolder2 = _interopRequireDefault(_CardHolder);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var Test = function (_React$Component) {
-    _inherits(Test, _React$Component);
-
-    function Test(props) {
-        _classCallCheck(this, Test);
-
-        return _possibleConstructorReturn(this, Object.getPrototypeOf(Test).call(this, props));
-    }
-
-    _createClass(Test, [{
-        key: 'render',
-        value: function render() {
-            return _react2.default.createElement(
-                'div',
-                null,
-                _react2.default.createElement(
-                    'h1',
-                    null,
-                    'Hello React!'
-                )
-            );
-        }
-    }]);
-
-    return Test;
-}(_react2.default.Component);
+function renderCardHolder(props) {
+    _reactDom2.default.render(_react2.default.createElement(_CardHolder2.default, props), document.getElementById('react'));
+}
 
 window.addEventListener('DOMContentLoaded', function () {
-    _reactDom2.default.render(_react2.default.createElement(Test, null), document.getElementById('react'));
+    renderCardHolder({
+        maxNumber: 8,
+        selectedCount: 0,
+        hoveringIndex: -1,
+        onUpdate: renderCardHolder
+    });
 }, false);
 
-},{"react":167,"react-dom":29}]},{},[168]);
+},{"./CardHolder":169,"react":167,"react-dom":29}]},{},[170]);
