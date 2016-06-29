@@ -1,22 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import CivilizationList from './CivilizationList';
-import PropertyUtil from './PropertyUtil';
+import CivilizationList from './model/CivilizationList';
+import * as CreditType from './model/CreditType';
+import PropertyUtil from './util/PropertyUtil';
 
-import Hands from './Hands';
-import TotalCostDisplay from './TotalCostDisplay';
-import CivilizationDisplay from './CivilizationDisplay';
+import Hands from './view/Hands';
+import TotalCostDisplay from './view/TotalCostDisplay';
+import CivilizationListView from './view/CivilizationListView';
 
 var state = initialState();
 var totalCost = 0;
-var credits = {
-    red: 5,
-    orange: 5,
-    blue: 5,
-    green: 5,
-    yellow: 5
-};
+var credits = new Map(
+    CreditType.ALL.map((type) => [type, 5])
+);
 
 function renderHands() {
     ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
@@ -30,22 +27,10 @@ function renderTotalCosts() {
 }
 
 function renderCivilizations() {
-    let civilizations = CivilizationList.map((civ) => {
-        let maxDiscount = Math.max.apply(null, civ.discountBy.map((color) => credits[color]));
-        return {
-            name: civ.name,
-            cost: Math.max(civ.cost - maxDiscount, 0),
-            buyable: civ.cost <= totalCost,
-            credits: civ.credits,
-            discountBy: civ.discountBy
-        };
-    });
     let displayProps = {
-        civilizations: civilizations,
-        buyHandler: buyCivilization,
         credits: credits
     };
-    ReactDOM.render(React.createElement(CivilizationDisplay, displayProps), document.getElementById('civilizations'));
+    ReactDOM.render(React.createElement(CivilizationListView, displayProps), document.getElementById('civilizations'));
 }
 
 function update(diff) {
@@ -71,7 +56,7 @@ function recalculateCost() {
 
 function buyCivilization(index) {
     let civ = CivilizationList[index];
-    if (civ.cost <= totalCost) {
+    if (civ.discountedCost(credits) <= totalCost) {
         civ.credits.forEach((credit) => {
             credits[credit.color] += credit.amount;
         });

@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-import Credits from './Credits';
+import Credits from '../model/CreditType';
 
 import Civilization from './Civilization';
 
