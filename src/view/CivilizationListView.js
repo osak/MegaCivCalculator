@@ -26,7 +26,8 @@ export default class CivilizationListView extends React.Component {
 
     render() {
         let style = {
-            borderCollapse: 'collapse'
+            borderCollapse: 'collapse',
+            width: '100%'
         };
         return (
             <table style={style}>
@@ -55,7 +56,7 @@ export default class CivilizationListView extends React.Component {
                 boxSizing: 'border-box'
             };
             if (!this.props.isBuyable(civ)) {
-                style.opacity = 0.3;
+                style.opacity = 0.5;
             }
             if (this.props.isSelected(civ)) {
                 style.boxShadow = 'inset 0 0 0 2px red';

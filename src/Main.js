@@ -8,6 +8,7 @@ import PropertyUtil from './util/PropertyUtil';
 import Hands from './view/Hands';
 import TotalCostDisplay from './view/TotalCostDisplay';
 import CivilizationListView from './view/CivilizationListView';
+import StatusDisplay from './view/StatusDisplay';
 
 var state = initialState();
 var totalCost = 0;
@@ -20,13 +21,6 @@ function renderHands() {
     ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
 }
 
-function renderTotalCosts() {
-    let totalCost = state.cardHolderStates.reduce((prev, curr) => {
-        return prev + (curr !== null ? curr[0].totalCost + curr[1].totalCost : 0);
-    }, 0);
-    ReactDOM.render(React.createElement(TotalCostDisplay, {totalCost: totalCost}), document.getElementById('total-cost'));
-}
-
 function renderCivilizations() {
     let displayProps = {
         credits: credits,
@@ -37,12 +31,26 @@ function renderCivilizations() {
     ReactDOM.render(React.createElement(CivilizationListView, displayProps), document.getElementById('civilizations'));
 }
 
+function renderStatusDisplay() {
+    var totalToBuy = 0;
+    selectedCivilizations.forEach((civ) => {
+        totalToBuy += civ.discountedCost(credits);
+    });
+    let props = {
+        totalProperty: totalCost,
+        totalToBuy: totalToBuy,
+        credits: credits,
+        buySelection: buySelection
+    };
+    ReactDOM.render(React.createElement(StatusDisplay, props), document.getElementById('status'));
+}
+
 function update(diff) {
     PropertyUtil.update(state, diff);
     recalculateCost();
     renderHands();
-    renderTotalCosts();
     renderCivilizations();
+    renderStatusDisplay();
 }
 
 function recalculateCost() {
@@ -69,16 +77,17 @@ function setSelectionState(civ, added) {
         selectedCivilizations.delete(civ);
     }
     renderCivilizations();
+    renderStatusDisplay();
 }
 
-function buyCivilization(index) {
-    let civ = CivilizationList[index];
-    if (civ.discountedCost(credits) <= totalCost) {
-        civ.credits.forEach((credit) => {
-            credits[credit.color] += credit.amount;
-        });
+function buySelection() {
+    for (let civ of selectedCivilizations) {
+        for (let credit of civ.credits) {
+            credits.set(credit.type, credits.get(credit.type) + credit.amount);
+        }
     }
     renderCivilizations();
+    renderStatusDisplay();
 }
 
 function initialState() {
