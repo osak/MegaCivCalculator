@@ -8,7 +8,8 @@ import Credit from './Credit';
 
 const STYLE = {
     background: 'lightgray',
-    borderRadius: '5pt'
+    borderRadius: '5pt',
+    lineHeight: '1.2em'
 };
 
 const BUTTON_STYLE = {
@@ -29,6 +30,7 @@ export default class StatusDisplay extends React.Component {
             <div style={STYLE}>
                 <div>Total property: {this.props.totalProperty}</div>
                 <div>Total to buy: {this.props.totalToBuy}<button style={BUTTON_STYLE} onClick={this.props.buySelection}>Buy</button></div>
+                <div style={{fontWeight: 'bold', color: 'red'}}>Required treasure: {Math.max(0, this.props.totalToBuy - this.props.totalProperty)}</div>
                 <div>Credits: {this.renderCredits()}</div>
             </div>
         );
