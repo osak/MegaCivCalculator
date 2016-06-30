@@ -28,7 +28,8 @@ function renderTotalCosts() {
 
 function renderCivilizations() {
     let displayProps = {
-        credits: credits
+        credits: credits,
+        isBuyable: isBuyable
     };
     ReactDOM.render(React.createElement(CivilizationListView, displayProps), document.getElementById('civilizations'));
 }
@@ -52,6 +53,10 @@ function recalculateCost() {
             totalCost += holder.totalCost;
         });
     });
+}
+
+function isBuyable(civ) {
+    return civ.discountedCost(credits) <= totalCost;
 }
 
 function buyCivilization(index) {

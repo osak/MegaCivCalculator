@@ -11,6 +11,13 @@ import Credit from './Credit';
 export default class CivilizationListView extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            hovering: null
+        };
+    }
+    
+    rowHoverChanger(index) {
+        return ((e) => this.setState({hovering: index})).bind(this);
     }
 
     render() {
@@ -36,14 +43,21 @@ export default class CivilizationListView extends React.Component {
     }
 
     renderTableBody() {
-        return CivilizationList.map((civ) => {
+        return CivilizationList.map((civ, i) => {
             let color1 = civ.discountBy[0].color;
             let color2 = (civ.discountBy[1] || civ.discountBy[0]).color;
             let style = {
-                backgroundImage: 'linear-gradient(90deg, ' + color1 + ',' + color2 + ')'
+                backgroundImage: 'linear-gradient(90deg, ' + color1 + ',' + color2 + ')',
+                boxSizing: 'border-box'
             };
+            if (!this.props.isBuyable(civ)) {
+                style.opacity = 0.3;
+            }
+            if (this.state.hovering == i) {
+                style.boxShadow = 'inset 0 0 0 2px black'
+            }
             return (
-                <tr style={style}>
+                <tr style={style} onMouseEnter={this.rowHoverChanger(i)} onMouseLeave={this.rowHoverChanger(null)}>
                     <td>{civ.discountedCost(this.props.credits)}</td>
                     <td>{civ.name}</td>
                     <td>{civ.description}</td>
