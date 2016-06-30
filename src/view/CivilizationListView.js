@@ -48,7 +48,7 @@ export default class CivilizationListView extends React.Component {
     }
 
     renderTableBody() {
-        return CivilizationList.map((civ, i) => {
+        return this.props.civilizations.map((civ, i) => {
             let color1 = civ.discountBy[0].color;
             let color2 = (civ.discountBy[1] || civ.discountBy[0]).color;
             let style = {

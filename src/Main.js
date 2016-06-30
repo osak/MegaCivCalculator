@@ -6,7 +6,6 @@ import * as CreditType from './model/CreditType';
 import PropertyUtil from './util/PropertyUtil';
 
 import Hands from './view/Hands';
-import TotalCostDisplay from './view/TotalCostDisplay';
 import CivilizationListView from './view/CivilizationListView';
 import StatusDisplay from './view/StatusDisplay';
 
@@ -16,19 +15,32 @@ var credits = new Map(
     CreditType.ALL.map((type) => [type, 5])
 );
 var selectedCivilizations = new Set();
+var acquiredCivilizations = [];
 
 function renderHands() {
     ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
 }
 
 function renderCivilizations() {
-    let displayProps = {
-        credits: credits,
-        isBuyable: isBuyable,
-        isSelected: (civ) => selectedCivilizations.has(civ),
-        setSelectionState: setSelectionState
-    };
-    ReactDOM.render(React.createElement(CivilizationListView, displayProps), document.getElementById('civilizations'));
+    ReactDOM.render(
+        <CivilizationListView
+            civilizations={CivilizationList.filter((civ) => acquiredCivilizations.indexOf(civ) == -1)}
+            credits={credits}
+            isBuyable={isBuyable}
+            isSelected={(civ) => selectedCivilizations.has(civ)}
+            setSelectionState={setSelectionState}
+        />, document.getElementById('civilizations'));
+}
+
+function renderAcquiredCivilizations() {
+    ReactDOM.render(
+        <CivilizationListView
+            civilizations={acquiredCivilizations}
+            credits={credits}
+            isBuyable={() => true}
+            isSelected={() => false}
+            setSelectionState={() => false}
+        />, document.getElementById('acquired-civilizations'));
 }
 
 function renderStatusDisplay() {
@@ -50,6 +62,7 @@ function update(diff) {
     recalculateCost();
     renderHands();
     renderCivilizations();
+    renderAcquiredCivilizations();
     renderStatusDisplay();
 }
 
@@ -82,11 +95,15 @@ function setSelectionState(civ, added) {
 
 function buySelection() {
     for (let civ of selectedCivilizations) {
-        for (let credit of civ.credits) {
-            credits.set(credit.type, credits.get(credit.type) + credit.amount);
+        if (acquiredCivilizations.indexOf(civ) == -1) {
+            for (let credit of civ.credits) {
+                credits.set(credit.type, credits.get(credit.type) + credit.amount);
+            }
+            acquiredCivilizations.push(civ);
         }
     }
     renderCivilizations();
+    renderAcquiredCivilizations();
     renderStatusDisplay();
 }
 
