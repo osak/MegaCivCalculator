@@ -20,6 +20,10 @@ export default class CivilizationListView extends React.Component {
         return ((e) => this.setState({hovering: index})).bind(this);
     }
 
+    rowClickHandler(civ) {
+        return ((e) => this.props.setSelectionState(civ, !this.props.isSelected(civ))).bind(this);
+    }
+
     render() {
         let style = {
             borderCollapse: 'collapse'
@@ -53,11 +57,16 @@ export default class CivilizationListView extends React.Component {
             if (!this.props.isBuyable(civ)) {
                 style.opacity = 0.3;
             }
-            if (this.state.hovering == i) {
-                style.boxShadow = 'inset 0 0 0 2px black'
+            if (this.props.isSelected(civ)) {
+                style.boxShadow = 'inset 0 0 0 2px red';
+            } else if (this.state.hovering == i) {
+                style.boxShadow = 'inset 0 0 0 2px gray'
             }
             return (
-                <tr style={style} onMouseEnter={this.rowHoverChanger(i)} onMouseLeave={this.rowHoverChanger(null)}>
+                <tr style={style}
+                    onMouseEnter={this.rowHoverChanger(i)}
+                    onMouseLeave={this.rowHoverChanger(null)}
+                    onClick={this.rowClickHandler(civ)}>
                     <td>{civ.discountedCost(this.props.credits)}</td>
                     <td>{civ.name}</td>
                     <td>{civ.description}</td>

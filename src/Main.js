@@ -14,6 +14,7 @@ var totalCost = 0;
 var credits = new Map(
     CreditType.ALL.map((type) => [type, 5])
 );
+var selectedCivilizations = new Set();
 
 function renderHands() {
     ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
@@ -29,7 +30,9 @@ function renderTotalCosts() {
 function renderCivilizations() {
     let displayProps = {
         credits: credits,
-        isBuyable: isBuyable
+        isBuyable: isBuyable,
+        isSelected: (civ) => selectedCivilizations.has(civ),
+        setSelectionState: setSelectionState
     };
     ReactDOM.render(React.createElement(CivilizationListView, displayProps), document.getElementById('civilizations'));
 }
@@ -57,6 +60,15 @@ function recalculateCost() {
 
 function isBuyable(civ) {
     return civ.discountedCost(credits) <= totalCost;
+}
+
+function setSelectionState(civ, added) {
+    if (added) {
+        selectedCivilizations.add(civ);
+    } else {
+        selectedCivilizations.delete(civ);
+    }
+    renderCivilizations();
 }
 
 function buyCivilization(index) {
