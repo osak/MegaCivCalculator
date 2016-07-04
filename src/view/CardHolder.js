@@ -9,41 +9,41 @@ import Card from './Card';
 export default class CardHolder extends React.Component {
     constructor(props) {
         super(props);
+        this.state = {
+            hoveringIndex: -1
+        };
     }
 
     hoverStateUpdater(index) {
-        return (e) => {
-            this.props.updateHandler({
+        return ((e) => {
+            this.setState({
                 hoveringIndex: index
             });
-        };
+        }).bind(this);
     }
     
     selectedStateUpdater(index) {
-        return (e) => {
-            let nextCount = index < this.props.selectedCount ? 0 : index + 1;
-            this.props.updateHandler({
-                selectedCount: nextCount
-            });
-        };
+        return ((e) => {
+            this.props.updateHandler(index < this.props.selectedCount ? 0 : index + 1);
+        }).bind(this);
     }
     
     render() {
         let cards = [];
         for (var i = 0; i < this.props.maxNumber; ++i) {
             cards.push(
-                <Card hoverHandler={this.hoverStateUpdater(i).bind(this)}
-                      leaveHandler={this.hoverStateUpdater(-1).bind(this)}
-                      clickHandler={this.selectedStateUpdater(i).bind(this)}
+                <Card hoverHandler={this.hoverStateUpdater(i)}
+                      leaveHandler={this.hoverStateUpdater(-1)}
+                      clickHandler={this.selectedStateUpdater(i)}
                       key={i}
                       selected={i < this.props.selectedCount}
-                      hovered={i <= this.props.hoveringIndex}
+                      hovered={i <= this.state.hoveringIndex}
                 />);
         }
         return (
             <div>
                 {cards}
-                <span>{this.props.totalCost}</span>
+                <span>{this.props.totalProperty}</span>
             </div>
         );
     }

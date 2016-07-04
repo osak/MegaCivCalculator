@@ -9,8 +9,8 @@ import Hands from './view/Hands';
 import CivilizationListView from './view/CivilizationListView';
 import StatusDisplay from './view/StatusDisplay';
 
-var state = initialState();
-var totalCost = 0;
+var hands = initialHands();
+var totalProperty = 0;
 var credits = new Map(
     CreditType.ALL.map((type) => [type, 5])
 );
@@ -18,7 +18,11 @@ var selectedCivilizations = new Set();
 var acquiredCivilizations = [];
 
 function renderHands() {
-    ReactDOM.render(React.createElement(Hands, state), document.getElementById('hands'));
+    ReactDOM.render(
+        <Hands
+            cardHolderStates={hands}
+            updateHandler={update}
+        />, document.getElementById('hands'));
 }
 
 function renderCivilizations() {
@@ -49,7 +53,7 @@ function renderStatusDisplay() {
         totalToBuy += civ.discountedCost(credits);
     });
     let props = {
-        totalProperty: totalCost,
+        totalProperty: totalProperty,
         totalToBuy: totalToBuy,
         credits: credits,
         buySelection: buySelection
@@ -57,9 +61,13 @@ function renderStatusDisplay() {
     ReactDOM.render(React.createElement(StatusDisplay, props), document.getElementById('status'));
 }
 
-function update(diff) {
-    PropertyUtil.update(state, diff);
+function update(cost, kind, count) {
+    hands[cost][kind].selectedCount = count;
     recalculateCost();
+    renderAll();
+}
+
+function renderAll() {
     renderHands();
     renderCivilizations();
     renderAcquiredCivilizations();
@@ -67,20 +75,20 @@ function update(diff) {
 }
 
 function recalculateCost() {
-    totalCost = 0;
-    state.cardHolderStates.forEach((holdersByCost, cost) => {
-        if (cost == 0) {
+    totalProperty = 0;
+    hands.forEach((holdersByValue, value) => {
+        if (value == 0) {
             return;
         }
-        holdersByCost.forEach((holder) => {
-            holder.totalCost = holder.selectedCount * holder.selectedCount * cost;
-            totalCost += holder.totalCost;
+        holdersByValue.forEach((holder) => {
+            holder.totalProperty = holder.selectedCount * holder.selectedCount * value;
+            totalProperty += holder.totalProperty;
         });
     });
 }
 
 function isBuyable(civ) {
-    return civ.discountedCost(credits) <= totalCost;
+    return civ.discountedCost(credits) <= totalProperty;
 }
 
 function setSelectionState(civ, added) {
@@ -103,31 +111,30 @@ function buySelection() {
         }
     }
     selectedCivilizations.clear();
+    hands = initialHands();
+    renderHands();
     renderCivilizations();
     renderAcquiredCivilizations();
     renderStatusDisplay();
 }
 
-function initialState() {
+function initialHands() {
     let cardHolderStates = [null];
     for (var i = 1; i <= 9; ++i) {
         cardHolderStates.push([
             {
                 selectedCount: 0,
-                hoveringIndex: -1
+                totalProperty: 0
             },
             {
                 selectedCount: 0,
-                hoveringIndex: -1
+                totalProperty: 0
             }
         ]);
     }
-    return {
-        cardHolderStates: cardHolderStates,
-        updateHandler: update
-    };
+    return cardHolderStates;
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    update({});
+    renderAll();
 }, false);

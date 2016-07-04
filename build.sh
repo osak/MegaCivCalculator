@@ -6,6 +6,10 @@ function run_command() {
     $cmd $*
 }
 
+while read; do
+    true;
+done
+
 if [ ! -x web ]; then
     run_command mkdir web
 fi

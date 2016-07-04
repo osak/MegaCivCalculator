@@ -22,31 +22,18 @@ export default class Hands extends React.Component {
     }
 
     cardHolderUpdater(cost, kind) {
-        return (stateDiff) => {
-            this.props.updateHandler({
-                cardHolderStates: [
-                    {
-                        index: cost,
-                        value: [
-                            {
-                                index: kind,
-                                value: stateDiff
-                            }
-                        ]
-                    }
-                ]
-            });
-        };
+        return ((index) => {
+            this.props.updateHandler(cost, kind, index);
+        }).bind(this);
     }
 
     renderCardsOfCost(cost) {
         let cardHolders = this.props.cardHolderStates[cost].map((state, i) => {
             return (<CardHolder
-                    updateHandler={this.cardHolderUpdater(cost, i).bind(this)}
+                    updateHandler={this.cardHolderUpdater(cost, i)}
                     maxNumber={10 - cost + 1}
                     selectedCount={state.selectedCount}
-                    hoveringIndex={state.hoveringIndex}
-                    totalCost={state.totalCost}
+                    totalProperty={state.totalProperty}
                     key={i}
                 />
             );
