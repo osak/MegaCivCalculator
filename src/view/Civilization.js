@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-import Credits from './Credits';
+import Credits from '../model/CreditType';
 
 const BASE_STYLE = {
     width: '100pt',
@@ -26,6 +26,9 @@ export default class Civilization extends React.Component {
         let color1 = Credits[this.props.discountBy[0]].color;
         let color2 = this.props.discountBy.length > 1 ? Credits[this.props.discountBy[1]].color : color1;
         style.backgroundImage = 'linear-gradient(90deg,' + color1 + ',' + color2 + ')';
+        if (!this.props.buyable) {
+            style.opacity = 0.3;
+        }
         return (
             <div style={style} onClick={this.props.clickHandler}>
                 <h3>{this.props.name}</h3>

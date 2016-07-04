@@ -9,5 +9,5 @@ function run_command() {
 if [ ! -x web ]; then
     run_command mkdir web
 fi
-run_command ./node_modules/.bin/browserify -t babelify src/Main.js > web/main.js
+run_command ./node_modules/.bin/browserify -t babelify -d src/Main.js > web/main.js
 run_command cp src/index.html web/
