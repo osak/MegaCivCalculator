@@ -4,8 +4,6 @@
 
 import React from 'react';
 
-import CivilizationList from '../model/CivilizationList';
-
 import Credit from './Credit';
 
 export default class CivilizationListView extends React.Component {
@@ -68,7 +66,7 @@ export default class CivilizationListView extends React.Component {
                     onMouseEnter={this.rowHoverChanger(i)}
                     onMouseLeave={this.rowHoverChanger(null)}
                     onClick={this.rowClickHandler(civ)}>
-                    <td>{civ.discountedCost(this.props.credits)}</td>
+                    <td>{this.props.costCalculator(civ)}</td>
                     <td>{civ.name}</td>
                     <td>{civ.description}</td>
                     <td>{this.renderCredits(civ.credits)}</td>
@@ -79,8 +77,8 @@ export default class CivilizationListView extends React.Component {
     }
     
     renderCredits(credits) {
-        return credits.map((credit) => {
-            return <Credit type={credit.type} amount={credit.amount} />;
-        });
+        return Array.from(credits.entries(), ([type, amount]) =>
+            <Credit type={type} amount={amount} />
+        );
     }
 }

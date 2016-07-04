@@ -1,9 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import CivilizationList from './model/CivilizationList';
+import * as Civilization from './model/Civilization';
 import * as CreditType from './model/CreditType';
-import PropertyUtil from './util/PropertyUtil';
 
 import Hands from './view/Hands';
 import CivilizationListView from './view/CivilizationListView';
@@ -28,8 +27,8 @@ function renderHands() {
 function renderCivilizations() {
     ReactDOM.render(
         <CivilizationListView
-            civilizations={CivilizationList.filter((civ) => acquiredCivilizations.indexOf(civ) == -1)}
-            credits={credits}
+            civilizations={Civilization.List.filter((civ) => acquiredCivilizations.indexOf(civ) == -1)}
+            costCalculator={calculateDiscountedCost}
             isBuyable={isBuyable}
             isSelected={(civ) => selectedCivilizations.has(civ)}
             setSelectionState={setSelectionState}
@@ -40,6 +39,7 @@ function renderAcquiredCivilizations() {
     ReactDOM.render(
         <CivilizationListView
             civilizations={acquiredCivilizations}
+            costCalculator={(civ) => civ.cost}
             credits={credits}
             isBuyable={() => true}
             isSelected={() => false}
@@ -50,7 +50,7 @@ function renderAcquiredCivilizations() {
 function renderStatusDisplay() {
     var totalToBuy = 0;
     selectedCivilizations.forEach((civ) => {
-        totalToBuy += civ.discountedCost(credits);
+        totalToBuy += calculateDiscountedCost(civ, credits, acquiredCivilizations);
     });
     let props = {
         totalProperty: totalProperty,
@@ -88,7 +88,7 @@ function recalculateCost() {
 }
 
 function isBuyable(civ) {
-    return civ.discountedCost(credits) <= totalProperty;
+    return calculateDiscountedCost(civ, credits, acquiredCivilizations) <= totalProperty;
 }
 
 function setSelectionState(civ, added) {
@@ -101,11 +101,15 @@ function setSelectionState(civ, added) {
     renderStatusDisplay();
 }
 
+function calculateDiscountedCost(civ) {
+    return civ.discountedCost(credits, acquiredCivilizations);
+}
+
 function buySelection() {
     for (let civ of selectedCivilizations) {
         if (acquiredCivilizations.indexOf(civ) == -1) {
-            for (let credit of civ.credits) {
-                credits.set(credit.type, credits.get(credit.type) + credit.amount);
+            for (let [type, amount] of civ.credits.entries()) {
+                credits.set(type, credits.get(type) + amount);
             }
             acquiredCivilizations.push(civ);
         }

@@ -12,6 +12,7 @@ export default class Credit extends React.Component {
     render() {
         let style = {
             color: this.props.type.color,
+            backgroundColor: 'gray',
             marginRight: '4pt'
         };
         return (

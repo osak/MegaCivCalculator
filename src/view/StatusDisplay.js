@@ -37,10 +37,8 @@ export default class StatusDisplay extends React.Component {
     }
 
     renderCredits() {
-        let result = [];
-        for (let entry of this.props.credits.entries()) {
-            result.push(<Credit key={entry[0].symbol} type={entry[0]} amount={entry[1]} />);
-        }
-        return result;
+        return Array.from(this.props.credits.entries(), ([type, amount]) =>
+            <Credit key={type.symbol} type={type} amount={amount} />
+        );
     }
 }
