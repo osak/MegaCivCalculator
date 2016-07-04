@@ -102,6 +102,7 @@ function buySelection() {
             acquiredCivilizations.push(civ);
         }
     }
+    selectedCivilizations.clear();
     renderCivilizations();
     renderAcquiredCivilizations();
     renderStatusDisplay();
