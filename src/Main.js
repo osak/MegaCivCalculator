@@ -49,16 +49,12 @@ function renderAcquiredCivilizations() {
 }
 
 function renderStatusDisplay() {
-    var totalToBuy = 0;
-    selectedCivilizations.forEach((civ) => {
-        totalToBuy += calculateDiscountedCost(civ, credits, acquiredCivilizations);
-    });
-    let props = {
-        totalProperty: totalProperty,
-        totalToBuy: totalToBuy,
-        credits: credits,
-        buySelection: buySelection
-    };
+    var discount = 0;
+    if (selectedCivilizations.has(Civilization.Library)) {
+        let costsWithoutLibrary = Array.from(selectedCivilizations).filter((civ) => civ != Civilization.Library).map((civ) => calculateDiscountedCost(civ));
+        discount = Math.min(Math.max(...costsWithoutLibrary, 0), 40);
+    }
+    let totalToBuy = Array.from(selectedCivilizations).reduce((sum, civ) => sum + calculateDiscountedCost(civ), 0) - discount;
     ReactDOM.render(
         <StatusDisplay
             totalProperty={totalProperty}
@@ -71,7 +67,7 @@ function renderStatusDisplay() {
 
 function update(cost, kind, count) {
     hands[cost][kind].selectedCount = count;
-    recalculateCost();
+    recalculateProperty();
     renderAll();
 }
 
@@ -82,7 +78,7 @@ function renderAll() {
     renderStatusDisplay();
 }
 
-function recalculateCost() {
+function recalculateProperty() {
     totalProperty = 0;
     hands.forEach((holdersByValue, value) => {
         if (value == 0) {
@@ -96,7 +92,7 @@ function recalculateCost() {
 }
 
 function isBuyable(civ) {
-    return calculateDiscountedCost(civ, credits, acquiredCivilizations) <= totalProperty;
+    return calculateDiscountedCost(civ) <= totalProperty;
 }
 
 function setSelectionState(civ, added) {
