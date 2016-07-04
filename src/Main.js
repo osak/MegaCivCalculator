@@ -10,6 +10,7 @@ import StatusDisplay from './view/StatusDisplay';
 
 var hands = initialHands();
 var totalProperty = 0;
+var victoryPoints = 0;
 var credits = new Map(
     CreditType.ALL.map((type) => [type, 5])
 );
@@ -58,7 +59,14 @@ function renderStatusDisplay() {
         credits: credits,
         buySelection: buySelection
     };
-    ReactDOM.render(React.createElement(StatusDisplay, props), document.getElementById('status'));
+    ReactDOM.render(
+        <StatusDisplay
+            totalProperty={totalProperty}
+            totalToBuy={totalToBuy}
+            credits={credits}
+            buySelection={buySelection}
+            victoryPoints={victoryPoints}
+         />, document.getElementById('status'));
 }
 
 function update(cost, kind, count) {
@@ -112,6 +120,7 @@ function buySelection() {
                 credits.set(type, credits.get(type) + amount);
             }
             acquiredCivilizations.push(civ);
+            victoryPoints += civ.victoryPoint;
         }
     }
     selectedCivilizations.clear();

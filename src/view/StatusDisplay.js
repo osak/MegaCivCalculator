@@ -9,7 +9,12 @@ import Credit from './Credit';
 const STYLE = {
     background: 'lightgray',
     borderRadius: '5pt',
-    lineHeight: '1.2em'
+    lineHeight: '1.2em',
+    display: 'flex'
+};
+
+const FLEX_ITEM = {
+    marginRight: '10pt'
 };
 
 const BUTTON_STYLE = {
@@ -28,10 +33,15 @@ export default class StatusDisplay extends React.Component {
     render() {
         return (
             <div style={STYLE}>
-                <div>Total property: {this.props.totalProperty}</div>
-                <div>Total to buy: {this.props.totalToBuy}<button style={BUTTON_STYLE} onClick={this.props.buySelection}>Buy</button></div>
-                <div style={{fontWeight: 'bold', color: 'red'}}>Required treasure: {Math.max(0, this.props.totalToBuy - this.props.totalProperty)}</div>
-                <div>Credits: {this.renderCredits()}</div>
+                <div style={FLEX_ITEM}>
+                    <div>Total property: {this.props.totalProperty}</div>
+                    <div>Total to buy: {this.props.totalToBuy}<button style={BUTTON_STYLE} onClick={this.props.buySelection}>Buy</button></div>
+                    <div style={{fontWeight: 'bold', color: 'red'}}>Required treasure: {Math.max(0, this.props.totalToBuy - this.props.totalProperty)}</div>
+                </div>
+                <div style={FLEX_ITEM}>
+                    <div>Credits: {this.renderCredits()}</div>
+                    <div>Victory Points: {this.props.victoryPoints}</div>
+                </div>
             </div>
         );
     }
