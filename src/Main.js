@@ -7,6 +7,7 @@ import * as CreditType from './model/CreditType';
 import Hands from './view/Hands';
 import CivilizationListView from './view/CivilizationListView';
 import StatusDisplay from './view/StatusDisplay';
+import CivilizationView from './view/CivilizationView';
 
 var hands = initialHands();
 var totalProperty = 0;
@@ -76,6 +77,12 @@ function renderAll() {
     renderCivilizations();
     renderAcquiredCivilizations();
     renderStatusDisplay();
+    ReactDOM.render(
+        <CivilizationView
+            costCalculator={calculateDiscountedCost}
+            civilization={Civilization.Library} />,
+        document.getElementById('test')
+    );
 }
 
 function recalculateProperty() {

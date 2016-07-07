@@ -6,7 +6,7 @@ import React from 'react';
 
 import Credits from '../model/CreditType';
 
-import Civilization from './Civilization';
+import Civilization from './CivilizationView';
 
 export default class CivilizationDisplay extends React.Component {
     constructor(props) {
