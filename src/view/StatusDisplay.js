@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Credit from './Credit';
+import Adjuster from './Adjuster'
 
 const STYLE = {
     background: 'lightgray',
@@ -25,9 +26,23 @@ const BUTTON_STYLE = {
     marginLeft: '20pt'
 };
 
+const CREDIT_STYLE = {
+    display: 'flex',
+    flexDirection: 'row'
+};
+
+const CREDITS_STYLE = {
+    display: 'flex',
+    flexDirection: 'column'
+};
+
 export default class StatusDisplay extends React.Component {
     constructor(props) {
         super(props);
+    }
+    
+    creditUpdater(type) {
+        return ((amount) => this.props.creditUpdater(type, amount)).bind(this);
     }
     
     render() {
@@ -37,18 +52,26 @@ export default class StatusDisplay extends React.Component {
                     <div>Total property: {this.props.totalProperty}</div>
                     <div>Total to buy: {this.props.totalToBuy}<button style={BUTTON_STYLE} onClick={this.props.buySelection}>Buy</button></div>
                     <div style={{fontWeight: 'bold', color: 'red'}}>Required treasure: {Math.max(0, this.props.totalToBuy - this.props.totalProperty)}</div>
+                    <div>Victory Points: {this.props.victoryPoints}</div>
                 </div>
                 <div style={FLEX_ITEM}>
-                    <div>Credits: {this.renderCredits()}</div>
-                    <div>Victory Points: {this.props.victoryPoints}</div>
+                    <div>{this.renderCredits()}</div>
                 </div>
             </div>
         );
     }
 
     renderCredits() {
-        return Array.from(this.props.credits.entries(), ([type, amount]) =>
-            <Credit key={type.symbol} type={type} amount={amount} />
+        let credits = Array.from(this.props.credits.entries(), ([type, amount]) =>
+            <div style={CREDIT_STYLE}>
+                <div style={{flexBasis: '4em', flexShrink: 0}}><Credit key={type.symbol} type={type} amount={amount} /></div>
+                <div style={{height: '100%'}}><Adjuster color={type.color} stateUpdater={this.creditUpdater(type)} /></div>
+            </div>
+        );
+        return (
+            <div style={CREDITS_STYLE}>
+                {credits}
+            </div>
         );
     }
 }

@@ -62,6 +62,7 @@ function renderStatusDisplay() {
             credits={credits}
             buySelection={buySelection}
             victoryPoints={victoryPoints}
+            creditUpdater={updateCredits}
          />, document.getElementById('status'));
 }
 
@@ -126,6 +127,12 @@ function buySelection() {
     renderCivilizations();
     renderAcquiredCivilizations();
     renderStatusDisplay();
+}
+
+function updateCredits(type, amount) {
+    credits.set(type, credits.get(type) + amount);
+    renderStatusDisplay();
+    renderCivilizations();
 }
 
 function initialHands() {

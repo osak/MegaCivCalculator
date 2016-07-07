@@ -6,11 +6,11 @@ import React from 'react';
 
 import Credit from './Credit';
 
-let CARD_STYLE = {
+const CARD_STYLE = {
     border: '2pt solid lightgray'
 };
 
-let COST_STYLE = {
+const COST_STYLE = {
     borderRadius: '50%',
     border: '2pt solid white',
     boxShadow: '2pt gray',
@@ -19,19 +19,19 @@ let COST_STYLE = {
     float: 'left',
 };
 
-let NAME_STYLE = {
+const NAME_STYLE = {
     fontSize: '1.5em',
     fontWeight: 'bold',
     width: '100%',
     textAlign: 'center',
 };
 
-let BOTTOM_ROW_STYLE = {
+const BOTTOM_ROW_STYLE = {
     display: 'flex',
     justifyContent: 'space-between'
 };
 
-let VP_STYLE = {
+const VP_STYLE = {
     backgroundColor: '#e0e0e0',
     border: '2pt solid white',
     borderRadius: '2pt',
@@ -45,11 +45,11 @@ let VP_STYLE = {
     flexShrink: 0,
 };
 
-let DESCRIPTION_STYLE = {
+const DESCRIPTION_STYLE = {
     padding: '0 3pt 0 3pt'
 };
 
-let CREDITS_STYLE = {
+const CREDITS_STYLE = {
     backgroundColor: '#e0e0e0'
 };
 
