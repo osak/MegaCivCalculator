@@ -36,11 +36,13 @@ let VP_STYLE = {
     border: '2pt solid white',
     borderRadius: '2pt',
     font: 'bold 1.2em serif',
-    width: '2em',
     textAlign: 'center',
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    flexBasis: '32pt',
+    flexGrow: 0,
+    flexShrink: 0,
 };
 
 let DESCRIPTION_STYLE = {

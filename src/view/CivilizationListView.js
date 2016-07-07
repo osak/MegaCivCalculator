@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Credit from './Credit';
+import CivilizationView from './CivilizationView'
 
 export default class CivilizationListView extends React.Component {
     constructor(props) {
@@ -25,60 +26,40 @@ export default class CivilizationListView extends React.Component {
     render() {
         let style = {
             borderCollapse: 'collapse',
-            width: '100%'
+            width: '100%',
+            listStyle: 'none',
+            paddingLeft: 0
         };
         return (
-            <table style={style}>
-                <thead>
-                <tr>
-                    <th>Cost</th>
-                    <th>Name</th>
-                    <th>Description</th>
-                    <th>Credits</th>
-                    <th>VP</th>
-                </tr>
-                </thead>
-                <tbody>
-                {this.renderTableBody()}
-                </tbody>
-            </table>
+            <ul style={style}>
+                {this.renderBody()}
+            </ul>
         )
     }
 
-    renderTableBody() {
+    renderBody() {
         return this.props.civilizations.map((civ, i) => {
-            let color1 = civ.discountBy[0].color;
-            let color2 = (civ.discountBy[1] || civ.discountBy[0]).color;
-            let style = {
-                backgroundImage: 'linear-gradient(90deg, ' + color1 + ',' + color2 + ')',
-                boxSizing: 'border-box'
-            };
-            if (!this.props.isBuyable(civ)) {
-                style.opacity = 0.5;
-            }
+            let needsWrap = !this.props.isBuyable(civ);
+            let style = {};
             if (this.props.isSelected(civ)) {
-                style.boxShadow = 'inset 0 0 0 2px red';
-            } else if (this.state.hovering == i) {
-                style.boxShadow = 'inset 0 0 0 2px gray'
+                style.border = '2pt solid red';
+            } else {
+                style.border = '2pt solid transparent';
             }
             return (
-                <tr style={style}
-                    onMouseEnter={this.rowHoverChanger(i)}
-                    onMouseLeave={this.rowHoverChanger(null)}
-                    onClick={this.rowClickHandler(civ)}>
-                    <td>{this.props.costCalculator(civ)}</td>
-                    <td>{civ.name}</td>
-                    <td>{civ.description}</td>
-                    <td>{this.renderCredits(civ.credits)}</td>
-                    <td>{civ.victoryPoint}</td>
-                </tr>
+                <li style={style} onClick={this.rowClickHandler(civ)} key={i}>
+                    {this.renderCard(civ, needsWrap)}
+                </li>
             )
         });
     }
-    
-    renderCredits(credits) {
-        return Array.from(credits.entries(), ([type, amount]) =>
-            <Credit type={type} amount={amount} />
-        );
+
+    renderCard(civ, needsWrap) {
+        let main = <CivilizationView costCalculator={this.props.costCalculator} civilization={civ} />;
+        if (needsWrap) {
+            return <div style={{backgroundColor: 'gray'}}><div style={{opacity: 0.5}}>{main}</div></div>;
+        } else {
+            return main;
+        }
     }
 }
