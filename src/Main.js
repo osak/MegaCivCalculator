@@ -121,6 +121,7 @@ function buySelection() {
     }
     selectedCivilizations.clear();
     hands = initialHands();
+    totalProperty = 0;
     renderHands();
     renderCivilizations();
     renderAcquiredCivilizations();
