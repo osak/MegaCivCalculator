@@ -7,7 +7,30 @@ import * as CreditType from './model/CreditType';
 import Hands from './view/Hands';
 import CivilizationListView from './view/CivilizationListView';
 import StatusDisplay from './view/StatusDisplay';
+import ControlPanel from './view/ControlPanel';
 
+const FILTERS = {
+    default: {
+        name: 'Default',
+        process: function(list) {
+            return list;
+        }
+    },
+    cost: {
+        name: 'Sort by Cost',
+        process: function(list) {
+            return list.sort((a, b) => calculateDiscountedCost(a) - calculateDiscountedCost(b));
+        }
+    },
+    vp: {
+        name: 'Sort by VP',
+        process: function(list) {
+            return list.sort((a, b) => a.victoryPoint - b.victoryPoint);
+        }
+    }
+};
+
+var currentFilter = FILTERS.default;
 var hands = initialHands();
 var totalProperty = 0;
 var victoryPoints = 0;
@@ -26,9 +49,10 @@ function renderHands() {
 }
 
 function renderCivilizations() {
+    let remainingCivilizations = Civilization.List.filter((civ) => acquiredCivilizations.indexOf(civ) == -1);
     ReactDOM.render(
         <CivilizationListView
-            civilizations={Civilization.List.filter((civ) => acquiredCivilizations.indexOf(civ) == -1)}
+            civilizations={currentFilter.process(remainingCivilizations)}
             costCalculator={calculateDiscountedCost}
             isBuyable={isBuyable}
             isSelected={(civ) => selectedCivilizations.has(civ)}
@@ -66,6 +90,14 @@ function renderStatusDisplay() {
          />, document.getElementById('status'));
 }
 
+function renderControlPanel() {
+    ReactDOM.render(
+        <ControlPanel
+            filters={FILTERS}
+            filterSetter={updateFilter}
+        />, document.getElementById('control-panel'));
+}
+
 function update(cost, kind, count) {
     hands[cost][kind].selectedCount = count;
     recalculateProperty();
@@ -77,6 +109,7 @@ function renderAll() {
     renderCivilizations();
     renderAcquiredCivilizations();
     renderStatusDisplay();
+    renderControlPanel();
 }
 
 function recalculateProperty() {
@@ -132,6 +165,11 @@ function buySelection() {
 function updateCredits(type, amount) {
     credits.set(type, credits.get(type) + amount);
     renderStatusDisplay();
+    renderCivilizations();
+}
+
+function updateFilter(name) {
+    currentFilter = FILTERS[name];
     renderCivilizations();
 }
 
